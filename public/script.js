@@ -1,7 +1,7 @@
 import React from "https://cdn.skypack.dev/react";
 import ReactDOM from "https://cdn.skypack.dev/react-dom";
 import * as Immer from "https://cdn.skypack.dev/immer";
-import io from "https://cdn.skypack.dev/socket.io-client";
+import io from "https://cdn.skypack.dev/socket.io-client@v4.0.1";
 
 import Buttons from './Buttons.js';
 import Board from './Board.js';
