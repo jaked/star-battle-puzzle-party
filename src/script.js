@@ -1,7 +1,7 @@
-import React from "https://cdn.skypack.dev/react";
-import ReactDOM from "https://cdn.skypack.dev/react-dom";
-import * as Immer from "https://cdn.skypack.dev/immer";
-import io from "https://cdn.skypack.dev/socket.io-client@v4.0.1";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import * as Immer from 'immer';
+import './style.css';
 
 import Buttons from './Buttons.js';
 import Board from './Board.js';
@@ -84,15 +84,26 @@ const App = () => {
   const socket = React.useRef(null);
 
   React.useEffect(() => {
-    socket.current = io();
-    socket.current.on("puzzle", puzzle => setPuzzle(puzzle));
-    socket.current.on("board", board => setBoard(board));
-    socket.current.on("puzzleSelection", puzzleSelection => {
-      setPuzzleList(puzzleSelection.puzzleList);
-      setCurrentPuzzle(puzzleSelection.currentPuzzle);
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${proto}//${location.host}/ws`);
+    socket.current = ws;
+    ws.addEventListener('message', event => {
+      const { type, data } = JSON.parse(event.data);
+      if (type === 'puzzle') setPuzzle(data);
+      else if (type === 'board') setBoard(data);
+      else if (type === 'puzzleSelection') {
+        setPuzzleList(data.puzzleList);
+        setCurrentPuzzle(data.currentPuzzle);
+      }
+      else if (type === 'snapshots') setSnapshots(data);
     });
-    socket.current.on("snapshots", snapshots => setSnapshots(snapshots));
+    return () => ws.close();
   }, []);
+
+  const send = (type, data) => {
+    if (socket.current?.readyState === WebSocket.OPEN)
+      socket.current.send(JSON.stringify({ type, data }));
+  };
 
   const makeOnClick = (row, column) => () => {
     setBoard(
@@ -109,28 +120,19 @@ const App = () => {
         }
       })
     );
-    if (!socket.current) return;
-    socket.current.emit("click", { row, column, action });
+    send('click', { row, column, action });
   };
 
-  const takeSnapshot = () => {
-    if (!socket.current) return;
-    socket.current.emit("takeSnapshot");
-  };
+  const takeSnapshot = () => send('takeSnapshot', null);
 
   const restoreSnapshot = board => {
     setBoard(board);
-    if (!socket.current) return;
-    socket.current.emit("restoreSnapshot", board);
+    send('restoreSnapshot', board);
   };
 
-  const reset = () => {
-    socket.current.emit("reset");
-  };
+  const reset = () => send('reset', null);
 
-  const choosePuzzle = puzzleName => {
-    socket.current.emit("choosePuzzle", puzzleName);    
-  };
+  const choosePuzzle = puzzleName => send('choosePuzzle', puzzleName);
 
   return e(
     'div',
@@ -178,4 +180,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(e(App), document.getElementById("app"));
+ReactDOM.createRoot(document.getElementById('app')).render(e(App));

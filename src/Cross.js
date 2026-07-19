@@ -1,10 +1,10 @@
-import React from "https://cdn.skypack.dev/react";
+import React from 'react';
 
 const e = React.createElement;
 
 const Cross = ({ size }) => {
   const offset = Math.sin(Math.PI / 4) * size / 2;
-  
+
   return e(
     "svg",
     {
@@ -25,22 +25,6 @@ const Cross = ({ size }) => {
         `
       }
     )
-    // e("line", {
-    //   x1: 0,
-    //   y1: 0,
-    //   x2: size,
-    //   y2: size,
-    //   stroke: "#FF0000",
-    //   strokeWidth: size / 5
-    // }),
-    // e("line", {
-    //   x1: 0,
-    //   y1: size,
-    //   x2: size,
-    //   y2: 0,
-    //   stroke: "#FF0000",
-    //   strokeWidth: size / 5
-    // })
   );
 };
 

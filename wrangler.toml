@@ -1,0 +1,14 @@
+name = "star-battle-puzzle-party"
+main = "worker/index.js"
+compatibility_date = "2024-09-23"
+
+[assets]
+directory = "./dist"
+
+[[durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoom"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["GameRoom"]

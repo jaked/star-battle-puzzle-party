@@ -1,4 +1,4 @@
-import React from "https://cdn.skypack.dev/react";
+import React from 'react';
 import Cross from "./Cross.js";
 import Star from "./Star.js";
 import colors from "./colors.js";
@@ -121,7 +121,7 @@ const Board = ({ puzzle, board, check, squareSize, makeOnClick }) => {
   const gridlines = [];
   for (let i = 0; i < size; i++) {
     gridlines.push(
-      e('path',        
+      e('path',
         {
           stroke: 'black',
           strokeDasharray: `${strokeWidth} ${strokeWidth}`,
